@@ -32,3 +32,46 @@ spec:
           # Delete files and directories starting with .. plus any other character
           rm -rf "${WORKSPACE_SOURCE_PATH}"/..?*
         fi
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: npm
+spec:
+  description: This task will run npm commands.
+  workspaces:
+    - name: source
+  params:
+    - name: ARGS
+      description: The npm arguments to run
+      type: array
+      default:
+        - "install"
+  steps:
+    - name: npm
+      image: node:18-alpine
+      workingDir: $(workspaces.source.path)
+      command: ["npm"]
+      args: ["$(params.ARGS)"]
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: jasmine
+spec:
+  description: This task will run Jasmine tests.
+  workspaces:
+    - name: source
+  params:
+    - name: ARGS
+      description: The npm arguments to run
+      type: array
+      default:
+        - "test"
+  steps:
+    - name: jasmine
+      image: node:18-alpine
+      workingDir: $(workspaces.source.path)
+      command: ["npm"]
+      args: ["$(params.ARGS)"]
+
