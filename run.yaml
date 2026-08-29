@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: pipelinerun
+spec:
+  pipelineRef:
+    name: juphc-tc-pipeline
+  params:
+    - name: build-image
+      value: image-registry.openshift-image-registry.svc:5000/sn-labs-$(context.pipelineRun.namespace)/juphc-tc-image:latest
+    - name: repo-url
+      value: https://github.com/ssamiran472/aapga-tax_calculator_java.git
+    - name: branch
+      value: main
+  workspaces:
+    - name: pipeline-workspace
+      persistentVolumeClaim:
+        claimName: pipelinerun-pvc
+    - name: dockerconfig-ws
+      secret:
+        secretName: dockerconfig-ws
